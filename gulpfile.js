@@ -25,5 +25,5 @@ gulp.task('build', function () {
 		.pipe(source('forever-combat.bundle.js'))
 		.pipe(buffer())
 		// .pipe(uglify()) //does not work with ES6 template strings
-		.pipe(gulp.dest('./build/'));
+		.pipe(gulp.dest('./'));
 });
