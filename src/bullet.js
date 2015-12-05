@@ -3,7 +3,7 @@ var THREE = require('three'),
 	Entity = require('./engine/entity'),
 	thrust = require('./engine/thrust');
 
-var MAX_SPEED = 20.0;
+var MAX_SPEED = 30.0;
 var THRUST = new THREE.Vector3(0, 1000.0, 0);
 var RADIUS = 0.4;
 var points = [
@@ -44,6 +44,12 @@ var Bullet = function () {
 		}
 	};
 
+	this.kill = function () {
+		life = -1;
+	};
+
+	this.checkCollides = entity.checkCollides;
+	this.getPoints = entity.getPoints;
 	this.position = entity.position;
 	this.velocity = entity.velocity;
 	this.setX = entity.setX;

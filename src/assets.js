@@ -8,6 +8,8 @@ var modelFiles = require('./models.js');
 var meshConfigs = [
 	{ name: 'player-one', file: 'player', texture: 'player-blue' },
 	{ name: 'player-two', file: 'player', texture: 'player-red' },
+	{ name: 'propeller-one', file: 'propeller', texture: 'player-blue'},// TODO: use the correct texture here
+	{ name: 'propeller-two', file: 'propeller', texture: 'player-red'},// TODO: use the correct texture here
 	{ name: 'bullet', file: 'bullet', texture: 'player-blue' }// TODO: use the correct texture here
 ];
 
@@ -49,6 +51,12 @@ module.exports = function () {
 			},
 			playerTwo: function () {
 				return mesh['player-two'].clone();
+			},
+			propellerOne: function () {
+				return mesh['propeller-one'].clone();
+			},
+			propellerTwo: function () {
+				return mesh['propeller-two'].clone();
 			},
 			bullet: function () {
 				return mesh['bullet'].clone();

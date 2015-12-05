@@ -110,9 +110,15 @@ var Entity = function (points) {
 		return pointsToWorld;
 	};
 
-	this.handleCollision = function (collision) {
-		position.add(collision.offset);
-		velocity.sub(collision.normal.multiplyScalar(velocity.dot(collision.normal)));
+	this.checkCollides = function (other) {
+		return _.some(pointsToWorld, function (p1) {
+			return _.some(other.getPoints(), function (p2) {
+				var dx = p1.x - p2.x,
+					dy = p1.y - p2.y,
+					radii = p1.r + p2.r;
+				return ((dx * dx) + (dy * dy) < (radii * radii));
+			});
+		});
 	};
 };
 

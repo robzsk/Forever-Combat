@@ -34,27 +34,29 @@ module.exports = function () {
 	}();
 
 	var createPlayer = function () {
-		var create = function (c, model) {
+		var create = function (c, model, propeller) {
 			var p = new Player();
 			p.set(c);
 			p.avatar = model();
+			p.propeller = propeller();
 			scene.add(p.avatar);
+			scene.add(p.propeller);
 			return p;
 		};
-		return function (input, spawn, angle, model) {
+		return function (input, spawn, angle, model, propeller) {
 			var player = [];
 
 			// create a row
 			var row = [];
-			row.push(create({input: input, spawn: { x: spawn.x + width, y: spawn.y }, angle: angle}, model));
-			row.push(create({input: input, spawn: { x: spawn.x,  y: spawn.y }, angle: angle}, model));
+			row.push(create({input: input, spawn: { x: spawn.x + width, y: spawn.y }, angle: angle}, model, propeller));
+			row.push(create({input: input, spawn: { x: spawn.x,  y: spawn.y }, angle: angle}, model, propeller));
 			player.push(row);
 			// end row
 
 			// another row
 			row = [];
-			row.push(create({input: input, spawn: { x: spawn.x + width, y: spawn.y + height }, angle: angle}, model));
-			row.push(create({input: input, spawn: { x: spawn.x,  y: spawn.y + height }, angle: angle}, model));
+			row.push(create({input: input, spawn: { x: spawn.x + width, y: spawn.y + height }, angle: angle}, model, propeller));
+			row.push(create({input: input, spawn: { x: spawn.x,  y: spawn.y + height }, angle: angle}, model, propeller));
 			player.push(row);
 			// end row
 
@@ -65,8 +67,8 @@ module.exports = function () {
 	return {
 		updateEntity: function (entity, ticks, step) {
 			_.each(entity, function (col) {
-				_.each(col, function (player) {
-					player.update(ticks, step);
+				_.each(col, function (ent) {
+					ent.update(ticks, step);
 				});
 
 				// wrap horizontal
@@ -104,6 +106,21 @@ module.exports = function () {
 			});
 		},
 
+		checkCollides: function (a, b) {
+			return _.some(a, function (row, z) {
+				return _.some(row, function (col, y) {
+					return _.some(col, function (ea, x) {
+						var eb = b[z][y][x];
+						if (!eb.isAlive() || !ea.isAlive()) {
+							return false;
+						} else {
+							return eb.checkCollides(ea);
+						}
+					});
+				});
+			});
+		},
+
 		spawnBullet: function (player, bullets) {
 			_.each(player, function (row, i) {
 				_.each(row, function (col, y) {
@@ -117,16 +134,26 @@ module.exports = function () {
 			});
 		},
 
+		killEntity: function (entity) {
+			_.each(entity, function (row) {
+				_.each(row, function (col) {
+					_.each(col, function (entity) {
+						entity.kill();
+					});
+				});
+			});
+		},
+
 		createBullet: function () {
 			return createBullet();
 		},
 
 		createPlayerOne: function (input, spawn, angle) {
-			return createPlayer(input, spawn, angle, assets.model.playerOne);
+			return createPlayer(input, spawn, angle, assets.model.playerOne, assets.model.propellerOne);
 		},
 
 		createPlayerTwo: function (input, spawn, angle) {
-			return createPlayer(input, spawn, angle, assets.model.playerTwo);
+			return createPlayer(input, spawn, angle, assets.model.playerTwo, assets.model.propellerTwo);
 		}
 	};
 }();

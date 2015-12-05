@@ -7,17 +7,19 @@ var THREE = require('three'),
 
 var MAX_SPEED = 10.0,
 	MAX_ANGULAR_SPEED = 3.0,
-	TORQUE = 50.0,
+	TORQUE = 50.0, DEATH_ROTATION = 0.2,
 	TRUST = new THREE.Vector3(0, 50.0, 0);
 
-var RADIUS = 0.8;
+var DEATH_TIME = 150;
+
+var RADIUS = 0.6;
 var points = [
 	{ x: 0, y: 0, z: 0, r: RADIUS, rs: RADIUS * RADIUS }
 ];
 
 var Player = function () {
 	var entity = new Entity(points),
-		dead = false,
+		dead = false, deathTimer = 0,
 		input;
 
 	var keys = {
@@ -45,7 +47,10 @@ var Player = function () {
 			v.normalize();
 			v.multiplyScalar(MAX_SPEED);
 		}
+	};
 
+	var rotateDead = function () {
+		entity.setRotationZ(entity.rotation().z + DEATH_ROTATION);
 	};
 
 	var handleInput = function (m) {
@@ -58,21 +63,28 @@ var Player = function () {
 
 	this.update = function (ticks, dt) {
 		if (!dead) {
+			input.update(ticks);
 			if (keys.fire) {
 				this.emit('fire');
 			}
-			input.update(ticks);
 			entity.update(dt, applyForce, applyDamping);
+		} else {
+			rotateDead();
+			deathTimer -= 1;
+			if (deathTimer < 0) {
+				dead = false;
+			}
 		}
 	};
 
-	this.isDead = function () {
-		return dead;
+	this.isAlive = function () {
+		return !dead;
 	};
 
 	this.kill = function () {
 		dead = true;
-		input.removeListener('input.move', handleInput);
+		deathTimer = DEATH_TIME;
+		entity.setVelocity(0, 0);
 	};
 
 	this.set = function (conf) {
@@ -91,7 +103,7 @@ var Player = function () {
 	this.rotation = entity.rotation;
 	this.setRotationZ = entity.setRotationZ;
 	this.getPoints = entity.getPoints;
-	this.handleCollision = entity.handleCollision;
+	this.checkCollides = entity.checkCollides;
 	this.setX = entity.setX;
 	this.setY = entity.setY;
 
