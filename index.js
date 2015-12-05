@@ -17,6 +17,7 @@ app.on('ready', function (n) {
 	});
 	// mainWindow.setMenuBarVisibility(false);
 	// mainWindow.setAutoHideMenuBar(true);
+	// mainWindow.setFullScreen(true);
 	mainWindow.loadUrl('file://' + __dirname + '/index.html');
 	client.create(mainWindow);
 });

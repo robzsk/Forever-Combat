@@ -7,8 +7,6 @@ var _ = require('underscore'),
 	Bullet = require('./bullet');
 
 module.exports = function () {
-	var width = scene.getWidth(), height = scene.getHeight();
-
 	var createBullet = function () {
 		var create = function () {
 			var b = new Bullet();
@@ -48,15 +46,15 @@ module.exports = function () {
 
 			// create a row
 			var row = [];
-			row.push(create({input: input, spawn: { x: spawn.x + width, y: spawn.y }, angle: angle}, model, propeller));
+			row.push(create({input: input, spawn: { x: spawn.x + scene.getViewWidth(), y: spawn.y }, angle: angle}, model, propeller));
 			row.push(create({input: input, spawn: { x: spawn.x,  y: spawn.y }, angle: angle}, model, propeller));
 			player.push(row);
 			// end row
 
 			// another row
 			row = [];
-			row.push(create({input: input, spawn: { x: spawn.x + width, y: spawn.y + height }, angle: angle}, model, propeller));
-			row.push(create({input: input, spawn: { x: spawn.x,  y: spawn.y + height }, angle: angle}, model, propeller));
+			row.push(create({input: input, spawn: { x: spawn.x + scene.getViewWidth(), y: spawn.y + scene.getViewHeight() }, angle: angle}, model, propeller));
+			row.push(create({input: input, spawn: { x: spawn.x,  y: spawn.y + scene.getViewHeight() }, angle: angle}, model, propeller));
 			player.push(row);
 			// end row
 
@@ -73,17 +71,17 @@ module.exports = function () {
 
 				// wrap horizontal
 				var swap;
-				if (col[0].position().x > width && col[0].velocity().x > 0) {
+				if (col[0].position().x > scene.getViewWidth() && col[0].velocity().x > 0) {
 					swap = col[0];
 					col[0] = col[1];
 					col[1] = swap;
-					swap.setX(col[0].position().x - width);
+					swap.setX(col[0].position().x - scene.getViewWidth());
 				}
-				if (col[1].position().x < -width && col[1].velocity().x < 0) {
+				if (col[1].position().x < -scene.getViewWidth() && col[1].velocity().x < 0) {
 					swap = col[1];
 					col[1] = col[0];
 					col[0] = swap;
-					swap.setX(col[1].position().x + width);
+					swap.setX(col[1].position().x + scene.getViewWidth());
 				}
 
 			});
@@ -91,17 +89,17 @@ module.exports = function () {
 			// wrap vertical
 			_.each(entity[0], function (col, n) {
 				var swap;
-				if (entity[1][n].position().y > height && entity[1][n].velocity().y > 0) {
+				if (entity[1][n].position().y > scene.getViewHeight() && entity[1][n].velocity().y > 0) {
 					swap = entity[1][n];
 					entity[1][n] = entity[0][n];
 					entity[0][n] = swap;
-					swap.setY(entity[1][n].position().y - height);
+					swap.setY(entity[1][n].position().y - scene.getViewHeight());
 				}
-				if (entity[0][n].position().y < -height && entity[0][n].velocity().y < 0) {
+				if (entity[0][n].position().y < -scene.getViewHeight() && entity[0][n].velocity().y < 0) {
 					swap = entity[0][n];
 					entity[0][n] = entity[1][n];
 					entity[1][n] = swap;
-					swap.setY(entity[0][n].position().y + height);
+					swap.setY(entity[0][n].position().y + scene.getViewHeight());
 				}
 			});
 		},

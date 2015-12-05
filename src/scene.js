@@ -1,6 +1,7 @@
 'use strict';
 
-var _ = require('underscore'),
+var $ = require('jquery'),
+	_ = require('underscore'),
 	THREE = require('three');
 
 var shake = function () {
@@ -40,9 +41,7 @@ var shake = function () {
 	return shake;
 }();
 
-const WIDTH = window.innerWidth,
-	HEIGHT = window.innerHeight,
-	windowWidth = window.innerWidth,
+var windowWidth = window.innerWidth,
 	windowHeight = window.innerHeight,
 	ZOOM = 1;
 
@@ -50,7 +49,23 @@ module.exports = function () {
 	var scene = new THREE.Scene(),
 		cam = new THREE.OrthographicCamera(windowWidth * ZOOM / -2, windowWidth * ZOOM / 2, windowHeight * ZOOM / 2, windowHeight * ZOOM / -2, 0.01, 10),
 		ambientLight = new THREE.AmbientLight(0xffffff),
-		renderer = new THREE.WebGLRenderer({ antialias: true });
+		renderer = new THREE.WebGLRenderer({ antialias: true }),
+		viewWidth, viewHeight;
+
+	var setSize = function () {
+		windowWidth = window.innerWidth;
+		windowHeight = window.innerHeight;
+		renderer.setSize(windowWidth, windowHeight);
+		viewWidth = windowWidth / cam.zoom;
+		viewHeight = windowHeight / cam.zoom;
+		cam.left = windowWidth * ZOOM / -2;
+		cam.right = windowWidth * ZOOM / 2;
+		cam.top = windowHeight * ZOOM / 2;
+		cam.bottom = windowHeight * ZOOM / -2;
+		cam.near = 0.01;
+		cam.far = 10;
+		cam.updateProjectionMatrix();
+	};
 
 	cam.zoom = 28;
 	cam.updateProjectionMatrix();
@@ -58,9 +73,15 @@ module.exports = function () {
 	scene.add(cam);
 	scene.add(ambientLight);
 
-	renderer.setSize(window.innerWidth, window.innerHeight);
 	renderer.setClearColor(0x7EC0EE, 1);
+
 	document.body.appendChild(renderer.domElement);
+
+	setSize();
+
+	$(window).on('resize', function () {
+		setSize();
+	});
 
 	return {
 		getCameraPosition: function () {
@@ -102,12 +123,12 @@ module.exports = function () {
 			shake.stop();
 		},
 
-		getWidth: function () {
-			return windowWidth / cam.zoom;
+		getViewWidth: function () {
+			return viewWidth;
 		},
 
-		getHeight: function () {
-			return windowHeight / cam.zoom;
+		getViewHeight: function () {
+			return viewHeight;
 		}
 
 	};
