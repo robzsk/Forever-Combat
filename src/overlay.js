@@ -82,60 +82,65 @@ var fullscreen = function () {
 }();
 
 var score = function () {
-	var ret = $('<div>')
+	var sc = $('<div>')
 		.css({
 			position: 'absolute',
-			fontSize: '70px'
+			fontSize: '50px',
+			top: '20px',
+			color: 'white',
+			width: '100%',
+			opacity: '0.5'
 		});
+	$(document.body).append(sc);
+	return function () {
+		return sc;
+	};
 
-	return ret;
+}();
+
+var div = function () {
+	return $('<div>')
+		.css({
+			width: '50%',
+			float: 'left'
+		});
 };
 
 var $a = function () {
-	var el = score();
+	var el = $('<div>');
 	el.css({
-		top: '20px',
-		left: '20px',
-		color: '#0000ff',
-		textShadow: '-5px 5px 0 #fff'
+		backgroundColor: 'blue',
+		textAlign: 'right',
+		float: 'right',
+		width: '150px',
+		paddingRight: '15px',
+		margin: '5px',
+		border: 'solid white 4px',
+		borderRadius: '10px'
 	});
-	$(document.body).append(el);
+
+	score().append(div().append(el));
 	return el;
 }();
 
 var $b = function () {
-	var el = score();
+	var el = $('<div>');
 	el.css({
-		top: '20px',
-		left: '20px',
-		color: '#ff0000',
-		textShadow: '5px 5px 0 #fff'
+		backgroundColor: 'red',
+		width: '150px',
+		paddingLeft: '15px',
+		margin: '5px',
+		border: 'solid white 4px',
+		borderRadius: '10px'
 	});
-	$(document.body).append(el);
+
+	score().append(div().append(el));
 	return el;
 }();
-
-var MID = window.innerWidth / 2;
-
-var setPosition = function () {
-	$a.css({
-		left: (MID - 40) + 'px'
-	});
-
-	$b.css({
-		left: (MID + 40) + 'px'
-	});
-};
-
-$(window).on('resize', function () {
-	MID = window.innerWidth / 2;
-	setPosition();
-});
 
 module.exports = {
 	update: function (a, b) {
 		$a.text(a);
 		$b.text(b);
-		setPosition();
 	}
 };

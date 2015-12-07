@@ -1,11 +1,6 @@
 
 
 overlays
-bullet + collision
-score
-propeller
 clouds
-explosions
 
-full screen
 load textures asynchronously
